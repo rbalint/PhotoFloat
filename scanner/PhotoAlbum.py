@@ -39,6 +39,8 @@ class Album(object):
 			return self._photos[-1].date
 		return max(self._photos[-1].date, self._albums[-1].date)
 	def __cmp__(self, other):
+		if isinstance(other.date, unicode):
+			return cmp(self.date, datetime.strptime(other.date, '%Y:%m:%d %H:%M:%S')) 
 		return cmp(self.date, other.date)
 	def add_photo(self, photo):
 		self._photos.append(photo)
@@ -315,7 +317,14 @@ class Photo(object):
 		else:
 			return self._attributes["dateTimeFile"]
 	def __cmp__(self, other):
-		date_compare = cmp(self.date, other.date)
+                if isinstance(self.date, unicode) and isinstance(other.date, unicode):
+                	date_compare = cmp(datetime.strptime(self.date, '%Y:%m:%d %H:%M:%S'), datetime.strptime(other.date, '%Y:%m:%d %H:%M:%S'))
+                elif isinstance(self.date, unicode):
+                	date_compare = cmp(datetime.strptime(self.date, '%Y:%m:%d %H:%M:%S'), other.date)
+                elif isinstance(other.date, unicode):
+                	date_compare = cmp(self.date, datetime.strptime(other.date, '%Y:%m:%d %H:%M:%S'))
+                else:
+ 			date_compare = cmp(self.date, other.date)
 		if date_compare == 0:
 			return cmp(self.name, other.name)
 		return date_compare
