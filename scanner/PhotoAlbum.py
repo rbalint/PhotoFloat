@@ -37,11 +37,16 @@ class Album(object):
 			return self._albums[-1].date
 		elif len(self._albums) == 0:
 			return self._photos[-1].date
-		return max(self._photos[-1].date, self._albums[-1].date)
-	def __cmp__(self, other):
-		if isinstance(other.date, unicode):
-			return cmp(self.date, datetime.strptime(other.date, '%Y:%m:%d %H:%M:%S')) 
-		return cmp(self.date, other.date)
+                return max(self._photos[-1].date, self._albums[-1].date)
+        def __cmp__(self, other):
+                if isinstance(self.date, unicode):
+                        if isinstance(other.date, unicode):
+                                return cmp(datetime.strptime(self.date, '%Y:%m:%d %H:%M:%S'), datetime.strptime(other.date, '%Y:%m:%d %H:%M:%S'))
+                        else:
+                                return cmp(datetime.strptime(self.date, '%Y:%m:%d %H:%M:%S'), other.date)
+                elif isinstance(other.date, unicode):
+                        return cmp(self.date, datetime.strptime(other.date, '%Y:%m:%d %H:%M:%S'))
+                return cmp(self.date, other.date)
 	def add_photo(self, photo):
 		self._photos.append(photo)
 		self._photos_sorted = False
